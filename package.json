@@ -1,0 +1,55 @@
+{
+  "name": "extended-serializer",
+  "type": "commonjs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/esm/index.d.mts",
+        "default": "./dist/esm/index.mjs"
+      },
+      "default": {
+        "types": "./dist/cjs/index.d.ts",
+        "default": "./dist/cjs/index.js"
+      }
+    }
+  },
+  "files": [
+    "**"
+  ],
+  "keywords": [
+    "extended",
+    "serializer",
+    "json",
+    "parse",
+    "stringify"
+  ],
+  "scripts": {
+    "fix": "npm run fix:lint && npm run fix:format",
+    "fix:lint": "eslint . --fix",
+    "fix:format": "prettier \"*.{js,json,md}\" \"src/**/*.{ts,tsx,md,mdx}\" --write",
+    "build": "npm run build:cjs && npm run build:esm",
+    "build:cjs": "tsc --outDir dist/cjs",
+    "build:esm": "tsc --module esnext --outDir dist/esm"
+  },
+  "author": "Morgan Barrett",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com:morganbarrett/jotai-persistence.git"
+  },
+  "dependencies": {
+    "jotai": "^2.11.3",
+    "safe-json-value": "^3.0.0"
+  },
+  "devDependencies": {
+    "eslint": "^9.19.0",
+    "eslint-import-resolver-typescript": "^3.7.0",
+    "eslint-plugin-import": "^2.31.0",
+    "prettier": "^3.4.2",
+    "typescript": "^5.7.3",
+    "typescript-eslint": "^8.23.0"
+  }
+}
