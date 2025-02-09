@@ -1,61 +1,97 @@
-import {type Definition, type Primitive, type Shape} from "./types";
-import {validate} from "./validate";
+import { type Definition, type ExtractType, type Primitive } from "./types";
+import { validate } from "./validate";
+
+type Shape = [string, string, Primitive];
 
 export const define = <T, P extends Primitive>(obj: Definition<T, P>) => obj;
 
-export const serializer = <Allowed = never>(
-	definitions: Record<string, Definition>,
-	tag = "$"
-) => {
-	const regex = new RegExp(`^\\${tag}+$`);
+export class Serializer<
+  Definitions extends Record<string, Definition<any, any>>,
+> {
+  private regex: RegExp;
 
-	const replacer = (_: string, value: unknown): Allowed | Primitive => {
-		for (const [key, obj] of Object.entries(definitions)) {
-			if (obj.is(value)) {
-				return [
-					tag,
-					key,
-					obj.encode(value, v => replacer("", v) as Primitive)
-				] satisfies Shape;
-			}
-		}
+  constructor(
+    private definitions: Definitions,
+    private tag = "$"
+  ) {
+    this.regex = new RegExp(`^\\${tag}+$`);
+  }
 
-		validate(value);
+  stringify(value: ExtractType<Definitions>) {
+    return JSON.stringify(this.recur(value));
+  }
 
-		if (Array.isArray(value)) {
-			const [first, ...rest] = value;
+  parse(value: string) {
+    return JSON.parse(value, (_, value) => this.reviver(value));
+  }
 
-			if (typeof first === "string" && regex.test(first)) {
-				return [`${tag}${first}`, ...rest];
-			}
-		}
+  private recur(rawValue: ExtractType<Definitions>): ExtractType<Definitions> {
+    const value = this.replacer(rawValue);
 
-		return value;
-	};
+    if (typeof value === "object") {
+      if (value === null) {
+        return null;
+      }
 
-	const reviver = (_: string, value: Allowed | Primitive): unknown => {
-		if (Array.isArray(value)) {
-			const [first, ...rest] = value;
+      if (Array.isArray(value)) {
+        return value.map((value) => this.recur(value));
+      }
 
-			if (typeof first === "string" && regex.test(first)) {
-				if (first === tag) {
-					const [key, data] = rest as [string, Primitive];
+      return Object.fromEntries(
+        Object.entries(value).map(([key, value]) => [key, this.recur(value)])
+      );
+    }
 
-					const obj = definitions[key];
+    return value;
+  }
 
-					if (!obj) {
-						throw new Error(`Unknown key ${key}`);
-					}
+  private replacer(value: ExtractType<Definitions>): Primitive {
+    for (const [key, obj] of Object.entries(this.definitions)) {
+      if (obj.is(value)) {
+        return [
+          this.tag,
+          key,
+          obj.encode(value, (v) =>
+            this.replacer(v as ExtractType<Definitions>)
+          ),
+        ] satisfies Shape;
+      }
+    }
 
-					return obj.decode(data);
-				}
+    validate(value);
 
-				return [first.slice(1), ...rest];
-			}
-		}
+    if (Array.isArray(value)) {
+      const [first, ...rest] = value;
 
-		return value;
-	};
+      if (typeof first === "string" && this.regex.test(first)) {
+        return [`${this.tag}${first}`, ...rest];
+      }
+    }
 
-	return {replacer, reviver};
-};
+    return value;
+  }
+
+  private reviver(value: Primitive): ExtractType<Definitions> {
+    if (Array.isArray(value)) {
+      const [first, ...rest] = value;
+
+      if (typeof first === "string" && this.regex.test(first)) {
+        if (first === this.tag) {
+          const [_, key, data] = value as Shape;
+
+          const obj = this.definitions[key];
+
+          if (!obj) {
+            throw new Error(`Unknown key ${key}`);
+          }
+
+          return obj.decode(data);
+        }
+
+        return [first.slice(1), ...rest];
+      }
+    }
+
+    return value;
+  }
+}

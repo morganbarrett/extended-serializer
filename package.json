@@ -32,21 +32,25 @@
     "fix:format": "prettier \"*.{js,json,md}\" \"src/**/*.{ts,tsx,md,mdx}\" --write",
     "build": "npm run build:cjs && npm run build:esm",
     "build:cjs": "tsc --outDir dist/cjs",
-    "build:esm": "tsc --module esnext --outDir dist/esm"
+    "build:esm": "tsc --module esnext --outDir dist/esm",
+    "test": "vitest run"
   },
   "author": "Morgan Barrett",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com:morganbarrett/jotai-persistence.git"
+    "url": "git+https://github.com/morganbarrett/extended-serializer.git"
   },
-  "dependencies": {},
   "devDependencies": {
+    "@vitest/eslint-plugin": "^1.1.27",
+    "@vitest/ui": "^3.0.5",
     "eslint": "^9.19.0",
     "eslint-import-resolver-typescript": "^3.7.0",
     "eslint-plugin-import": "^2.31.0",
+    "eslint-plugin-testing-library": "^7.1.1",
     "prettier": "^3.4.2",
     "typescript": "^5.7.3",
-    "typescript-eslint": "^8.23.0"
+    "typescript-eslint": "^8.23.0",
+    "vitest": "^3.0.5"
   }
 }
