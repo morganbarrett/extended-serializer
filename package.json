@@ -40,10 +40,7 @@
     "type": "git",
     "url": "git+https://github.com:morganbarrett/jotai-persistence.git"
   },
-  "dependencies": {
-    "jotai": "^2.11.3",
-    "safe-json-value": "^3.0.0"
-  },
+  "dependencies": {},
   "devDependencies": {
     "eslint": "^9.19.0",
     "eslint-import-resolver-typescript": "^3.7.0",
