@@ -1,95 +1,105 @@
-import { type Definition, type ExtractType, type Primitive } from "./types";
-import { validate } from "./validate";
+import { type ExtractType, type Transform } from "./transforms";
+import { type Primitive, validate } from "./validate";
 
 type Shape = [string, string, Primitive];
-
-export const define = <T, P extends Primitive>(obj: Definition<T, P>) => obj;
+type ShapeLike = [string, ...Primitive[]];
 
 export class Serializer<
-  Definitions extends Record<string, Definition<any, any>>,
+  Transforms extends Record<string, Transform<any, any>>,
 > {
   private regex: RegExp;
 
   constructor(
-    private definitions: Definitions,
+    private transforms: Transforms,
     private tag = "$"
   ) {
     this.regex = new RegExp(`^\\${tag}+$`);
   }
 
-  stringify(value: ExtractType<Definitions>) {
-    return JSON.stringify(this.recur(value));
+  stringify(value: ExtractType<Transforms>): string {
+    return JSON.stringify(this.replacer(value));
   }
 
-  parse(value: string) {
-    return JSON.parse(value, (_, value) => this.reviver(value));
+  parse(value: string): ExtractType<Transforms> {
+    return this.reviver(JSON.parse(value));
   }
 
-  private recur(rawValue: ExtractType<Definitions>): ExtractType<Definitions> {
-    const value = this.replacer(rawValue);
-
-    if (typeof value === "object") {
-      if (value === null) {
-        return null;
-      }
-
-      if (Array.isArray(value)) {
-        return value.map((value) => this.recur(value));
-      }
-
-      return Object.fromEntries(
-        Object.entries(value).map(([key, value]) => [key, this.recur(value)])
-      );
-    }
-
-    return value;
-  }
-
-  private replacer(value: ExtractType<Definitions>): Primitive {
-    for (const [key, obj] of Object.entries(this.definitions)) {
-      if (obj.is(value)) {
-        return [
-          this.tag,
-          key,
-          obj.encode(value, (v) =>
-            this.replacer(v as ExtractType<Definitions>)
-          ),
-        ] satisfies Shape;
+  private replacer(value: ExtractType<Transforms>): Primitive {
+    for (const [key, obj] of Object.entries(this.transforms)) {
+      if (obj.test(value)) {
+        return this.serializeCustom(key, obj.serialize(value));
       }
     }
 
     validate(value);
 
-    if (Array.isArray(value)) {
-      const [first, ...rest] = value;
-
-      if (typeof first === "string" && this.regex.test(first)) {
-        return [`${this.tag}${first}`, ...rest];
-      }
+    if (this.isShapeLike(value)) {
+      return this.escapeShape(value);
     }
 
-    return value;
+    return this.recur(value, "replacer") as Primitive;
   }
 
-  private reviver(value: Primitive): ExtractType<Definitions> {
-    if (Array.isArray(value)) {
-      const [first, ...rest] = value;
+  private reviver(value: Primitive): ExtractType<Transforms> {
+    if (this.isShape(value)) {
+      return this.deserializeCustom(value);
+    }
 
-      if (typeof first === "string" && this.regex.test(first)) {
-        if (first === this.tag) {
-          const [_, key, data] = value as Shape;
+    if (this.isShapeLike(value)) {
+      return this.unescapeShape(value);
+    }
 
-          const obj = this.definitions[key];
+    return this.recur(value, "reviver");
+  }
 
-          if (!obj) {
-            throw new Error(`Unknown key ${key}`);
-          }
+  private isShape(value: Primitive): value is Shape {
+    return this.isShapeLike(value) && value[0] === this.tag;
+  }
 
-          return obj.decode(data);
-        }
+  private isShapeLike(value: Primitive): value is ShapeLike {
+    return (
+      Array.isArray(value) &&
+      typeof value[0] === "string" &&
+      this.regex.test(value[0])
+    );
+  }
 
-        return [first.slice(1), ...rest];
+  private serializeCustom(key: string, value: ExtractType<Transforms>): Shape {
+    return [this.tag, key, this.replacer(value)];
+  }
+
+  private deserializeCustom([_, key, data]: Shape): ExtractType<Transforms> {
+    const obj = this.transforms[key];
+
+    if (!obj) {
+      throw new Error(`Unknown transform ${key}`);
+    }
+
+    return obj.deserialize(this.reviver(data));
+  }
+
+  private escapeShape([first, ...rest]: ShapeLike): ShapeLike {
+    return [
+      `${this.tag}${first}`,
+      ...rest.map((value) => this.replacer(value)),
+    ];
+  }
+
+  private unescapeShape([first, ...rest]: ShapeLike): ExtractType<Transforms> {
+    return [first.slice(1), ...rest.map((value) => this.reviver(value))];
+  }
+
+  private recur(value: Primitive, fnKey: "replacer" | "reviver") {
+    const fn = this[fnKey].bind(this);
+
+    if (typeof value === "object" && value !== null) {
+      if (Array.isArray(value)) {
+        return value.map(fn);
       }
+
+      return Object.fromEntries(
+        Object.entries(value).map(([key, value]) => [key, fn(value)])
+      );
     }
 
     return value;

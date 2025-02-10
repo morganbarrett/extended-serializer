@@ -8,9 +8,37 @@
 
 Offers support for custom types when serializing and deserializing data.
 
-Includes some common types that can be optionally used, such as `undefined`, `NaN`, `Infinity`, `BigInt`, `Set`, `Map`, and `Date`.
+Validates the data is serializable, see below.
 
-When writing custom types, the `is` function tests if the value is one that you want to capture, then the `encode` function takes a value and should return a primitive representation of it, then the `decode` function should take the primitive made by `encode` and reconstruct the original value from it.
+No chance of collisions, escapes any data that is the same shape as custom serialized data.
+
+Includes some common types that can be optionally used, see below.
+
+## Transforms
+
+| Name      | Values                    |
+| --------- | ------------------------- |
+| undefined | `undefined`               |
+| nan       | `NaN`                     |
+| infinity  | `Infinity` or `-Infinity` |
+| bigint    | `BigInt`                  |
+| set       | `Set`                     |
+| map       | `Map`                     |
+| date      | `Date`                    |
+| regexp    | `RegExp`                  |
+
+## Invalid Data
+
+| Type             |                                                                                                                                     |
+| ---------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| symbols          |                                                                                                                                     |
+| functions        |                                                                                                                                     |
+| non pure arrays  | arrays whose constructor is not `Array` or arrays with non integer properties                                                       |
+| non pure objects | objects whose constructor is not `Object` (includes class instances) or objects with getters, setters, or non enumerable properties |
+
+Support for any of these can be added via custom transforms.
+
+The types listed above in transforms are also invalid when the transform is not used.
 
 ## Example
 
@@ -18,22 +46,29 @@ When writing custom types, the `is` function tests if the value is one that you 
 import {
   define,
   Serializer,
-  coreDefinitions,
+  transforms,
   type ExtractType,
 } from "extended-serializer";
 
-const definitions = {
-  ...coreDefinitions,
-  custom: define({
-    is: (value) => value instanceof Custom,
-    encode: (value) => [value.a, value.b],
-    decode: ([a, b]) => new Custom(a, b),
+class Custom {
+  constructor(
+    public a: number,
+    public b: number
+  ) {}
+}
+
+const customTransforms = {
+  ...transforms,
+  custom: transform({
+    test: (value) => value instanceof Custom,
+    serialize: ({ a, b }) => ({ a, b }),
+    deserialize: ({ a, b }) => new Custom(a, b),
   }),
 };
 
-type Primitive = ExtractType<typeof definitions>;
+type Primitive = ExtractType<typeof customTransforms>;
 
-const serializer = new Serializer(definitions);
+const serializer = new Serializer(customTransforms);
 
 const value = {
   a: NaN,
@@ -45,7 +80,7 @@ const value = {
   ]),
   e: new Date(),
   f: new Custom(1, 2),
-};
+} satisfies Primitive;
 
 const encoded = serializer.stringify(value);
 const decoded = serializer.parse(encoded);
@@ -53,14 +88,20 @@ const decoded = serializer.parse(encoded);
 //decoded is now a deep clone of value
 ```
 
-## Core Definitions
+## Alternative Work
 
-| Name      | Values                    |
-| --------- | ------------------------- |
-| undefined | `undefined`               |
-| nan       | `NaN`                     |
-| infinity  | `Infinity` or `-Infinity` |
-| bigint    | `BigInt`                  |
-| set       | `Set`                     |
-| map       | `Map`                     |
-| date      | `Date`                    |
+### tRPC/tupleSON
+
+https://github.com/trpc/tupleson
+
+- Relies on a nonce to prevent collisions
+- Doesn't support NaN or Infinity
+- Archived
+
+### ScaleForge/joser
+
+https://github.com/ScaleForge/joser
+
+- Relies on a nonce to prevent collisions
+- Only supports class types, that must be in global scope
+- Doesn't fully validate serializable values

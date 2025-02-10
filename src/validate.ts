@@ -1,6 +1,13 @@
-import { type Primitive } from "./types";
+export type Primitive<Extra = never> =
+  | null
+  | boolean
+  | number
+  | string
+  | Extra
+  | Primitive<Extra>[]
+  | { [key: string]: Primitive<Extra> };
 
-//can't detect proxies, should be obvious proxies can't be serialized
+//can't detect proxies, should be obvious proxies shouldn't be serialized
 export function validate(value: unknown): asserts value is Primitive {
   switch (typeof value) {
     case "boolean":
@@ -23,7 +30,6 @@ export function validate(value: unknown): asserts value is Primitive {
     case "bigint":
       throw new Error("Bigints are not serializable");
     case "object": {
-      //null allowed
       if (value === null) {
         return;
       }

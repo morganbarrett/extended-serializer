@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { type Definition, Serializer, coreDefinitions } from "../src";
+import { Serializer, type Transform, transforms } from "../src";
 
 const allValid = {
   null: null,
@@ -13,11 +13,18 @@ const allValid = {
   "tag string": "$",
   "empty array": [],
   array: [1, 2, 3],
-  "lone tag array": ["$"],
-  "tag array": ["$", 1, 2],
-  "escaped tag array": ["$$", "a"],
-  "double escaped tag array": ["$$$", "$$", "$"],
+  "tagged array": ["$", 1, 2],
+  "lone tagged array": ["$"],
+  "escaped tagged array": ["$$", "a"],
+  "double escaped tagged array": ["$$$", "$$", "$"],
   object: { a: 1, b: 2, c: 3 },
+  complex: {
+    a: [1, "a"],
+    b: {
+      c: ["$", "a"],
+    },
+    d: null,
+  },
 };
 
 const allInvalid = {
@@ -45,27 +52,50 @@ const coreValid = {
   Date: new Date(),
   Set: new Set([1, 2, 3]),
   Map: new Map([["a", 1]]),
+  "nested Set": new Set([new Set([1, 2, 3])]),
+  "nested tag": new Set([["$", "set", [1, 2, 3]]]),
+  complex: {
+    a: [1, "a"],
+    b: {
+      c: ["$", "a"],
+    },
+    d: null,
+    e: new Date(),
+    f: new Set([
+      1,
+      2,
+      new Set(["a", "b"]),
+      {
+        g: new Map<string, any>([
+          ["a", 5n],
+          ["b", NaN],
+          ["c", new Date()],
+        ]),
+      },
+    ]),
+  },
 };
 
 const baseSerializer = new Serializer({});
-const coreSerializer = new Serializer(coreDefinitions);
+const coreSerializer = new Serializer(transforms);
 
-const runValid = <Definitions extends Record<string, Definition<any, any>>>(
-  serializer: Serializer<Definitions>,
+const runValid = <Transforms extends Record<string, Transform<any, any>>>(
+  serializer: Serializer<Transforms>,
   tests: Record<string, any>
 ) => {
   for (const [name, value] of Object.entries(tests)) {
     it(name, () => {
       const str = serializer.stringify(value);
       const parsed = serializer.parse(str);
+      console.log(str, parsed);
 
       expect(parsed).toEqual(value);
     });
   }
 };
 
-const runInvalid = <Definitions extends Record<string, Definition<any, any>>>(
-  serializer: Serializer<Definitions>,
+const runInvalid = <Transforms extends Record<string, Transform<any, any>>>(
+  serializer: Serializer<Transforms>,
   tests: Record<string, any>
 ) => {
   for (const [name, value] of Object.entries(tests)) {
