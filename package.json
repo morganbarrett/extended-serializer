@@ -1,14 +1,14 @@
 {
   "name": "extended-serializer",
   "type": "commonjs",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "",
   "main": "dist/esm/src/index.mjs",
   "exports": {
     ".": {
       "import": {
-        "types": "./dist/esm/src/index.d.mts",
-        "default": "./dist/esm/src/index.mjs"
+        "types": "./dist/esm/src/index.d.ts",
+        "default": "./dist/esm/src/index.js"
       },
       "default": {
         "types": "./dist/cjs/src/index.d.ts",
