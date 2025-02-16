@@ -6,6 +6,7 @@
 
 ## About
 
+- link to [documentation](http://morganbarrett.github.io/extended-serializer)
 - Extends JSON serialization to support almost all data types.
 - Validates all input data to ensure that it is serializable.
 - Doesn't rely on a nonce like other solutions, so no chance of collisions.
