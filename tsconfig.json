@@ -5,13 +5,13 @@
     "jsx": "react-jsx",
     "esModuleInterop": true,
     "module": "esnext",
+    "lib": ["ESNext"],
     "moduleResolution": "bundler",
     "noUncheckedIndexedAccess": true,
-    "exactOptionalPropertyTypes": true,
     "skipLibCheck": true,
     "verbatimModuleSyntax": true,
     "declaration": true
   },
-  "include": ["src/**/*", "test/**/*"],
+  "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]
 }

@@ -1,0 +1,259 @@
+<!DOCTYPE html><html class="default" lang="en" data-base="."><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>extended-serializer</title><meta name="description" content="Documentation for extended-serializer"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="assets/style.css"/><link rel="stylesheet" href="assets/highlight.css"/><script defer src="assets/main.js"></script><script async src="assets/icons.js" id="tsd-icons-script"></script><script async src="assets/search.js" id="tsd-search-script"></script><script async src="assets/navigation.js" id="tsd-nav-script"></script></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os";document.body.style.display="none";setTimeout(() => app?app.showPage():document.body.style.removeProperty("display"),500)</script><header class="tsd-page-toolbar"><div class="tsd-toolbar-contents container"><div class="table-cell" id="tsd-search"><div class="field"><label for="tsd-search-field" class="tsd-widget tsd-toolbar-icon search no-caption"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="assets/icons.svg#icon-search"></use></svg></label><input type="text" id="tsd-search-field" aria-label="Search"/></div><div class="field"><div id="tsd-toolbar-links"></div></div><ul class="results"><li class="state loading">Preparing search index...</li><li class="state failure">The search index is not available</li></ul><a href="index.html" class="title">extended-serializer</a></div><div class="table-cell" id="tsd-widgets"><a href="#" class="tsd-widget tsd-toolbar-icon menu no-caption" data-toggle="menu" aria-label="Menu"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="assets/icons.svg#icon-menu"></use></svg></a></div></div></header><div class="container container-main"><div class="col-content"><div class="tsd-page-title"><h1>extended-serializer</h1></div><div class="tsd-panel tsd-typography"><a id="extended-serializer" class="tsd-anchor"></a><h1 class="tsd-anchor-link">Extended Serializer<a href="#extended-serializer" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h1><a id="install" class="tsd-anchor"></a><h2 class="tsd-anchor-link">Install<a href="#install" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2><p><code>npm install extended-serializer</code></p>
+<a id="about" class="tsd-anchor"></a><h2 class="tsd-anchor-link">About<a href="#about" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2><ul>
+<li>Extends JSON serialization to support almost all data types.</li>
+<li>Validates all input data to ensure that it is serializable.</li>
+<li>Doesn't rely on a nonce like other solutions, so no chance of collisions.</li>
+<li>Never calls <code>toJSON</code> methods.</li>
+</ul>
+<a id="transforms-1" class="tsd-anchor"></a><h2 class="tsd-anchor-link">Transforms<a href="#transforms-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2><p>This is an exhastive list of all possible values in JavaScript, and the applicable transforms to make them serializable.</p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Values</th>
+<th>Applicable transform</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>null</code> value</td>
+<td><code>null</code></td>
+<td>none needed</td>
+<td></td>
+</tr>
+<tr>
+<td><code>boolean</code> primitive type</td>
+<td><code>true</code> or <code>false</code></td>
+<td>none needed</td>
+<td></td>
+</tr>
+<tr>
+<td><code>string</code> primitive type</td>
+<td>e.g. <code>&quot;hello&quot;</code></td>
+<td>none needed</td>
+<td></td>
+</tr>
+<tr>
+<td><code>number</code> primitive type</td>
+<td>e.g. <code>5</code></td>
+<td>none needed</td>
+<td>except NaN, Infinity, -0</td>
+</tr>
+<tr>
+<td><code>Object</code> instance</td>
+<td>e.g. <code>{a: 1, b: 2, c: 3}</code></td>
+<td>none needed</td>
+<td>except complex <code>Object</code> instances or repeated references</td>
+</tr>
+<tr>
+<td><code>Array</code> instance</td>
+<td>e.g. <code>[1, 2, 3]</code></td>
+<td>none needed</td>
+<td>except complex <code>Array</code> instances or repeated references</td>
+</tr>
+<tr>
+<td><code>-0</code> value</td>
+<td><code>-0</code></td>
+<td><code>negativeZeroTransform</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>NaN</code> value</td>
+<td><code>NaN</code></td>
+<td><code>nanTransform</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>Infinity</code> value</td>
+<td><code>Infinity</code> or <code>-Infinity</code></td>
+<td><code>infinityTransform</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>undefined</code> primitive type</td>
+<td><code>undefined</code></td>
+<td><code>undefinedTransform</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>bigint</code> primitive type</td>
+<td>e.g. <code>5n</code></td>
+<td><code>bigIntTransform</code></td>
+<td></td>
+</tr>
+<tr>
+<td>complex <code>Object</code> instance</td>
+<td>e.g. <code>{[Symbol.toStringTag]: &quot;something&quot;}</code></td>
+<td><code>complexObjectTransform</code></td>
+<td>an object with symbol keys, or non standard property descriptors</td>
+</tr>
+<tr>
+<td>complex <code>Array</code> instance</td>
+<td>e.g. <code>Object.assign([1, 2, 3], {a: 1, b: 2, c: 3})</code></td>
+<td><code>complexArrayTransform</code></td>
+<td>an array with extra or missing properties</td>
+</tr>
+<tr>
+<td>repeated and circular references</td>
+<td>e.g. <code>[value, value]</code></td>
+<td><code>repeatedReferencesTransform</code></td>
+<td>should be first transform included</td>
+</tr>
+<tr>
+<td>global registry <code>symbol</code> primitive type</td>
+<td>e.g. <code>Symbol.for(&quot;something&quot;)</code></td>
+<td><code>registrySymbolTransform</code></td>
+<td>you may want to omit this transform if encoding and decoding in different environments</td>
+</tr>
+<tr>
+<td>well known <code>symbol</code> primitive type</td>
+<td>e.g. <code>Symbol.iterator</code></td>
+<td><code>wellKnownSymbolTransform</code></td>
+<td></td>
+</tr>
+<tr>
+<td>local <code>symbol</code> primitive type</td>
+<td>e.g. <code>Symbol(&quot;something&quot;)</code></td>
+<td>requires custom transform</td>
+<td></td>
+</tr>
+<tr>
+<td><code>function</code> primitive type</td>
+<td>e.g. <code>() =&gt; true</code></td>
+<td>requires custom transform</td>
+<td></td>
+</tr>
+<tr>
+<td>class instance</td>
+<td>e.g. <code>new CustomClass()</code></td>
+<td>requires custom transform</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<a id="js-built-in-class-instances" class="tsd-anchor"></a><h3 class="tsd-anchor-link">JS built-in class instances<a href="#js-built-in-class-instances" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3><table>
+<thead>
+<tr>
+<th>Class</th>
+<th>Transform</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Set</code></td>
+<td><code>setTransform</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>Map</code></td>
+<td><code>mapTransform</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>Date</code></td>
+<td><code>dateTransform</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>RegExp</code></td>
+<td><code>regExpTransform</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>ArrayBuffer</code></td>
+<td><code>arrayBufferTransform</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>DataView</code></td>
+<td><code>dataViewTransform</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>Boolean</code>, <code>Number</code>, <code>String</code></td>
+<td><code>primitiveClassTransform</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>Error</code>, <code>EvalError</code>, <code>RangeError</code>, <code>ReferenceError</code>, <code>SyntaxError</code>, <code>TypeError</code>, <code>URIError</code>, <code>AggregateError</code></td>
+<td><code>errorClassTransform</code></td>
+<td>won't encode not standard properties</td>
+</tr>
+<tr>
+<td><code>Int8Array</code>, <code>Uint8Array</code>, <code>Uint8ClampedArray</code>, <code>Int16Array</code>, <code>Uint16Array</code>, <code>Int32Array</code>, <code>Uint32Array</code>, <code>Float32Array</code>, <code>Float64Array</code>, <code>BigInt64Array</code>, <code>BigUint64Array</code></td>
+<td><code>typedArrayTransform</code></td>
+<td>will need <code>arrayBufferTransform</code></td>
+</tr>
+</tbody>
+</table>
+<a id="notes" class="tsd-anchor"></a><h2 class="tsd-anchor-link">Notes<a href="#notes" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2><ul>
+<li>Proxies will be flattened, without being flagged by the validator as these can only be detected in node, see example for custom validator to reject proxies in node.</li>
+<li>When writing custom transforms, to test for custom class instances, use <code>isInstanceOf</code> instead of <code>instanceof</code> to prevent capturing instances of subclasses.</li>
+</ul>
+<a id="example" class="tsd-anchor"></a><h2 class="tsd-anchor-link">Example<a href="#example" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2><pre><code class="ts"><span class="hl-0">import</span><span class="hl-1"> </span><span class="hl-2">util</span><span class="hl-1"> </span><span class="hl-0">from</span><span class="hl-1"> </span><span class="hl-3">&quot;node:util&quot;</span><span class="hl-1">;</span><br/><span class="hl-0">import</span><span class="hl-1"> {</span><br/><span class="hl-1">	</span><span class="hl-0">type</span><span class="hl-1"> </span><span class="hl-2">Serializable</span><span class="hl-1">,</span><br/><span class="hl-1">	</span><span class="hl-2">transforms</span><span class="hl-1">,</span><br/><span class="hl-1">	</span><span class="hl-2">transform</span><span class="hl-1">,</span><br/><span class="hl-1">	</span><span class="hl-2">classTransform</span><span class="hl-1">,</span><br/><span class="hl-1">	</span><span class="hl-2">classGroupTransform</span><span class="hl-1">,</span><br/><span class="hl-1">	</span><span class="hl-2">stringify</span><span class="hl-1">,</span><br/><span class="hl-1">	</span><span class="hl-2">parse</span><br/><span class="hl-1">} </span><span class="hl-0">from</span><span class="hl-1"> </span><span class="hl-3">&quot;extended-serializer&quot;</span><span class="hl-1">;</span><br/><br/><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">options</span><span class="hl-1"> = {</span><br/><span class="hl-1">	</span><span class="hl-6">validate</span><span class="hl-2">:</span><span class="hl-1"> </span><span class="hl-2">value</span><span class="hl-1"> </span><span class="hl-4">=&gt;</span><span class="hl-1"> !</span><span class="hl-2">util</span><span class="hl-1">.</span><span class="hl-2">types</span><span class="hl-1">.</span><span class="hl-6">isProxy</span><span class="hl-1">(</span><span class="hl-2">value</span><span class="hl-1">),</span><br/><span class="hl-1">	</span><span class="hl-2">transforms:</span><span class="hl-1"> [</span><br/><span class="hl-1">		...</span><span class="hl-2">transforms</span><span class="hl-1">,</span><br/><span class="hl-1">		</span><span class="hl-2">customSymbol</span><span class="hl-1">: </span><span class="hl-6">makeTransform</span><span class="hl-1">({</span><br/><span class="hl-1">			</span><span class="hl-6">test</span><span class="hl-2">:</span><span class="hl-1"> (</span><span class="hl-2">value</span><span class="hl-1">) </span><span class="hl-4">=&gt;</span><span class="hl-1"> </span><span class="hl-2">value</span><span class="hl-1"> === </span><span class="hl-2">customSymbol</span><span class="hl-1">,</span><br/><span class="hl-1">			</span><span class="hl-6">decode</span><span class="hl-2">:</span><span class="hl-1"> () </span><span class="hl-4">=&gt;</span><span class="hl-1"> </span><span class="hl-2">customSymbol</span><span class="hl-1">,</span><br/><span class="hl-1">		}),</span><br/><span class="hl-1">		</span><span class="hl-2">customFunction</span><span class="hl-1">: </span><span class="hl-6">makeTransform</span><span class="hl-1">({</span><br/><span class="hl-1">			</span><span class="hl-6">test</span><span class="hl-2">:</span><span class="hl-1"> (</span><span class="hl-2">value</span><span class="hl-1">) </span><span class="hl-4">=&gt;</span><span class="hl-1"> </span><span class="hl-2">value</span><span class="hl-1"> === </span><span class="hl-2">customFunction</span><span class="hl-1">,</span><br/><span class="hl-1">			</span><span class="hl-6">decode</span><span class="hl-2">:</span><span class="hl-1"> () </span><span class="hl-4">=&gt;</span><span class="hl-1"> </span><span class="hl-2">customFunction</span><span class="hl-1">,</span><br/><span class="hl-1">		}),</span><br/><span class="hl-1">		</span><span class="hl-2">customClass</span><span class="hl-1">: </span><span class="hl-6">makeClassTransform</span><span class="hl-1">({</span><br/><span class="hl-1">			</span><span class="hl-2">constructor:</span><span class="hl-1"> </span><span class="hl-2">CustomClass</span><span class="hl-1">,</span><br/><span class="hl-1">			</span><span class="hl-6">encode</span><span class="hl-2">:</span><span class="hl-1"> ({ </span><span class="hl-2">a</span><span class="hl-1">, </span><span class="hl-2">b</span><span class="hl-1"> }) </span><span class="hl-4">=&gt;</span><span class="hl-1"> [</span><span class="hl-2">a</span><span class="hl-1">, </span><span class="hl-2">b</span><span class="hl-1">],</span><br/><span class="hl-1">		}),</span><br/><span class="hl-1">		</span><span class="hl-2">customClassGroup</span><span class="hl-1">: </span><span class="hl-6">makeClassGroupTransform</span><span class="hl-1">({</span><br/><span class="hl-1">			</span><span class="hl-2">key:</span><span class="hl-1"> </span><span class="hl-3">&quot;customClassGroup&quot;</span><span class="hl-1">,</span><br/><span class="hl-1">			</span><span class="hl-2">classes:</span><span class="hl-1"> [</span><span class="hl-2">IntVector</span><span class="hl-1">, </span><span class="hl-2">FloatVector</span><span class="hl-1">, </span><span class="hl-2">BooleanVector</span><span class="hl-1">],</span><br/><span class="hl-1">			</span><span class="hl-6">encode</span><span class="hl-2">:</span><span class="hl-1"> ({ </span><span class="hl-2">x</span><span class="hl-1">, </span><span class="hl-2">y</span><span class="hl-1">, </span><span class="hl-2">z</span><span class="hl-1"> }) </span><span class="hl-4">=&gt;</span><span class="hl-1"> [</span><span class="hl-2">x</span><span class="hl-1">, </span><span class="hl-2">y</span><span class="hl-1">, </span><span class="hl-2">z</span><span class="hl-1">],</span><br/><span class="hl-1">		}),</span><br/><span class="hl-1">	],</span><br/><span class="hl-1">} </span><span class="hl-0">satisfies</span><span class="hl-1"> </span><span class="hl-7">SerializeOptions</span><span class="hl-1">;</span><br/><br/><span class="hl-4">type</span><span class="hl-1"> </span><span class="hl-7">Primitive</span><span class="hl-1"> = </span><span class="hl-7">Serializable</span><span class="hl-1">&lt;</span><span class="hl-4">typeof</span><span class="hl-1"> </span><span class="hl-2">options</span><span class="hl-1">&gt;;</span><br/><br/><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">value</span><span class="hl-1"> = {</span><br/><span class="hl-1">  </span><span class="hl-2">a:</span><span class="hl-1"> </span><span class="hl-4">NaN</span><span class="hl-1">,</span><br/><span class="hl-1">  </span><span class="hl-2">b:</span><span class="hl-1"> </span><span class="hl-4">Infinity</span><span class="hl-1">,</span><br/><span class="hl-1">  </span><span class="hl-2">c:</span><span class="hl-1"> </span><span class="hl-4">new</span><span class="hl-1"> </span><span class="hl-6">Set</span><span class="hl-1">([</span><span class="hl-8">1</span><span class="hl-1">, </span><span class="hl-8">2</span><span class="hl-1">, </span><span class="hl-8">3</span><span class="hl-1">]),</span><br/><span class="hl-1">  </span><span class="hl-2">d:</span><span class="hl-1"> </span><span class="hl-2">customSymbol</span><span class="hl-1">,</span><br/><span class="hl-1">  </span><span class="hl-2">e:</span><span class="hl-1"> </span><span class="hl-2">customFunction</span><span class="hl-1">,</span><br/><span class="hl-1">  </span><span class="hl-2">f:</span><span class="hl-1"> </span><span class="hl-4">new</span><span class="hl-1"> </span><span class="hl-6">CustomClass</span><span class="hl-1">(</span><span class="hl-8">1</span><span class="hl-1">, </span><span class="hl-8">2</span><span class="hl-1">),</span><br/><span class="hl-1">} </span><span class="hl-0">satisfies</span><span class="hl-1"> </span><span class="hl-7">Primitive</span><span class="hl-1">;</span><br/><br/><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">str</span><span class="hl-1"> = </span><span class="hl-6">stringify</span><span class="hl-1">(</span><span class="hl-2">value</span><span class="hl-1">, </span><span class="hl-2">options</span><span class="hl-1">);</span><br/><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">clone</span><span class="hl-1"> = </span><span class="hl-6">parse</span><span class="hl-1">(</span><span class="hl-2">encoded</span><span class="hl-1">, </span><span class="hl-2">options</span><span class="hl-1">);</span><br/><br/><span class="hl-9">//clone is now a deep clone of value</span><br/><br/><span class="hl-9">//or can use clone</span><br/><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">clone</span><span class="hl-1"> = </span><span class="hl-6">clone</span><span class="hl-1">(</span><span class="hl-2">value</span><span class="hl-1">, </span><span class="hl-2">options</span><span class="hl-1">);</span>
+</code><button type="button">Copy</button></pre>
+
+<a id="alternative-work" class="tsd-anchor"></a><h2 class="tsd-anchor-link">Alternative Work<a href="#alternative-work" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2><a id="devalue" class="tsd-anchor"></a><h3 class="tsd-anchor-link">devalue<a href="#devalue" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3><p><a href="https://github.com/Rich-Harris/devalue">https://github.com/Rich-Harris/devalue</a></p>
+<ul>
+<li>Can't pick and choose transforms</li>
+<li>Doesn't fully validate serializable values</li>
+<li>Unflexible custom transforms</li>
+</ul>
+<a id="oson" class="tsd-anchor"></a><h3 class="tsd-anchor-link">oson<a href="#oson" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3><p><a href="https://github.com/KnorpelSenf/oson?tab=readme-ov-file">https://github.com/KnorpelSenf/oson?tab=readme-ov-file</a></p>
+<ul>
+<li>Only supports class instances custom transforms</li>
+<li>Doesn't support NaN, Infinity, -0</li>
+<li>Doesn't support well known symbols or symbols in global registry</li>
+<li>Doesn't fully validate serializable values</li>
+</ul>
+<a id="superjson" class="tsd-anchor"></a><h3 class="tsd-anchor-link">superjson<a href="#superjson" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3><p><a href="https://github.com/flightcontrolhq/superjson">https://github.com/flightcontrolhq/superjson</a></p>
+<ul>
+<li>Globally defined transforms</li>
+<li>Doesn't fully validate serializable values</li>
+</ul>
+<a id="next-json" class="tsd-anchor"></a><h3 class="tsd-anchor-link">next-json<a href="#next-json" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3><p><a href="https://github.com/iccicci/next-json?tab=readme-ov-file">https://github.com/iccicci/next-json?tab=readme-ov-file</a></p>
+<ul>
+<li>Non JSON output</li>
+<li>Doesn't support ArrayBuffer or TypedArrays</li>
+<li>Doesn't support well known symbols or symbols in global registry</li>
+<li>Doesn't support Error instances</li>
+<li>Doesn't support complex objects</li>
+</ul>
+<a id="arson" class="tsd-anchor"></a><h3 class="tsd-anchor-link">arson<a href="#arson" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3><p><a href="https://github.com/benjamn/arson">https://github.com/benjamn/arson</a></p>
+<ul>
+<li>Doesn't fully validate serializable values</li>
+<li>Doesn't fully restore serialized values (e.g RegExp missing lastIndex)</li>
+</ul>
+<a id="trpctupleson" class="tsd-anchor"></a><h3 class="tsd-anchor-link">tRPC/tupleSON<a href="#trpctupleson" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3><p><a href="https://github.com/trpc/tupleson">https://github.com/trpc/tupleson</a></p>
+<ul>
+<li>Relies on a nonce to prevent collisions</li>
+<li>Doesn't support NaN or Infinity</li>
+<li>Archived</li>
+</ul>
+<a id="scaleforgejoser" class="tsd-anchor"></a><h3 class="tsd-anchor-link">ScaleForge/joser<a href="#scaleforgejoser" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3><p><a href="https://github.com/ScaleForge/joser">https://github.com/ScaleForge/joser</a></p>
+<ul>
+<li>Relies on a nonce to prevent collisions</li>
+<li>Only supports class types, that must be in global scope</li>
+<li>Doesn't fully validate serializable values</li>
+</ul>
+<a id="tosource" class="tsd-anchor"></a><h3 class="tsd-anchor-link">tosource<a href="#tosource" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3><p><a href="https://github.com/marcello3d/node-tosource">https://github.com/marcello3d/node-tosource</a></p>
+<ul>
+<li>Non JSON output</li>
+<li>Not extendable</li>
+<li>Doesn't fully validate serializable values (by design, e.g. attempts to serialize functions with toString)</li>
+</ul>
+<a id="serialize-javascript" class="tsd-anchor"></a><h3 class="tsd-anchor-link">serialize-javascript<a href="#serialize-javascript" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3><p><a href="https://github.com/yahoo/serialize-javascript">https://github.com/yahoo/serialize-javascript</a></p>
+<ul>
+<li>Creates a JS script requiring dangerous eval</li>
+</ul>
+<a id="lave" class="tsd-anchor"></a><h3 class="tsd-anchor-link">Lave<a href="#lave" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3><p><a href="https://github.com/jed/lave">https://github.com/jed/lave</a></p>
+<ul>
+<li>Creates a JS script requiring dangerous eval</li>
+<li>Archived</li>
+</ul>
+<pre><code>
+</code><button>Copy</button></pre>
+
+</div></div><div class="col-sidebar"><div class="page-menu"><div class="tsd-navigation settings"><details class="tsd-accordion"><summary class="tsd-accordion-summary"><h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="assets/icons.svg#icon-chevronDown"></use></svg>Settings</h3></summary><div class="tsd-accordion-details"><div class="tsd-filter-visibility"><span class="settings-label">Member Visibility</span><ul id="tsd-filter-options"><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-protected" name="protected"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Protected</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-inherited" name="inherited" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Inherited</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-external" name="external"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>External</span></label></li></ul></div><div class="tsd-theme-toggle"><label class="settings-label" for="tsd-theme">Theme</label><select id="tsd-theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></div></div></details></div><details open class="tsd-accordion tsd-page-navigation"><summary class="tsd-accordion-summary"><h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="assets/icons.svg#icon-chevronDown"></use></svg>On This Page</h3></summary><div class="tsd-accordion-details"><a href="#extended-serializer"><span>Extended <wbr/>Serializer</span></a><ul><li><a href="#install"><span>Install</span></a></li><li><a href="#about"><span>About</span></a></li><li><a href="#transforms-1"><span>Transforms</span></a></li><li><ul><li><a href="#js-built-in-class-instances"><span>JS built-<wbr/>in class instances</span></a></li></ul></li><li><a href="#notes"><span>Notes</span></a></li><li><a href="#example"><span>Example</span></a></li><li><a href="#alternative-work"><span>Alternative <wbr/>Work</span></a></li><li><ul><li><a href="#devalue"><span>devalue</span></a></li><li><a href="#oson"><span>oson</span></a></li><li><a href="#superjson"><span>superjson</span></a></li><li><a href="#next-json"><span>next-<wbr/>json</span></a></li><li><a href="#arson"><span>arson</span></a></li><li><a href="#trpctupleson"><span>tRPC/tupleSON</span></a></li><li><a href="#scaleforgejoser"><span>Scale<wbr/>Forge/joser</span></a></li><li><a href="#tosource"><span>tosource</span></a></li><li><a href="#serialize-javascript"><span>serialize-<wbr/>javascript</span></a></li><li><a href="#lave"><span>Lave</span></a></li></ul></li></ul></div></details></div><div class="site-menu"><nav class="tsd-navigation"><a href="modules.html">extended-serializer</a><ul class="tsd-small-nested-navigation" id="tsd-nav-container"><li>Loading...</li></ul></nav></div></div></div><footer><p class="tsd-generator">Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></footer><div class="overlay"></div></body></html>

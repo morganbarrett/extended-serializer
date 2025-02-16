@@ -1,8 +1,8 @@
 import eslint from "@eslint/js";
-import importPlugin from "eslint-plugin-import";
-import tseslint from "typescript-eslint";
 import vitest from "@vitest/eslint-plugin";
+import importPlugin from "eslint-plugin-import";
 import testingLibrary from "eslint-plugin-testing-library";
+import tseslint from "typescript-eslint";
 
 export default tseslint.config(
   {
@@ -64,7 +64,7 @@ export default tseslint.config(
     },
   },
   {
-    files: ["tests/**/*.{ts,tsx}"],
+    files: ["**/*.test.{ts,tsx}"],
     ...testingLibrary.configs["flat/react"],
     ...vitest.configs.recommended,
     rules: {
