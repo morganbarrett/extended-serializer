@@ -4,6 +4,7 @@
 <li>Validates all input data to ensure that it is serializable.</li>
 <li>Doesn't rely on a nonce like other solutions, so no chance of collisions.</li>
 <li>Never calls <code>toJSON</code> methods.</li>
+<li>Well tested with 100% coverage.</li>
 </ul>
 <a id="transforms-1" class="tsd-anchor"></a><h2 class="tsd-anchor-link">Transforms<a href="#transforms-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2><p>This is an exhastive list of all possible values in JavaScript, and the applicable transforms to make them serializable.</p>
 <table>
@@ -95,10 +96,10 @@
 <td>an array with extra or missing properties</td>
 </tr>
 <tr>
-<td>repeated and circular references</td>
-<td>e.g. <code>[value, value]</code></td>
-<td><code>repeatedReferencesTransform</code></td>
-<td>should be first transform included</td>
+<td><s>repeated and circular references</s></td>
+<td><s>e.g. <code>[value, value]</code></s></td>
+<td><s><code>repeatedReferencesTransform</code></s></td>
+<td>NOT FINISHED <s>should be first transform included</s></td>
 </tr>
 <tr>
 <td>global registry <code>symbol</code> primitive type</td>
