@@ -4,8 +4,8 @@ export const isComplexProperty = (descriptor: PropertyDescriptor) =>
   !descriptor.writable ||
   !descriptor.enumerable ||
   !descriptor.configurable ||
-  descriptor.get ||
-  descriptor.set;
+  descriptor.get !== undefined ||
+  descriptor.set !== undefined;
 
 export const isComplexObject = (
   value: unknown
