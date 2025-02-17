@@ -1,7 +1,7 @@
 {
   "name": "extended-serializer",
   "type": "commonjs",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "",
   "main": "dist/esm/index.mjs",
   "exports": {
