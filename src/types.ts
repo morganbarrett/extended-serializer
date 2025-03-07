@@ -118,6 +118,7 @@ export type Primitive<Extra = never> =
   | { [key: string]: Primitive<Extra> };
 
 export type TransformedPrimitive<Extra = never> = Primitive<
+  | Extra
   | undefined
   | bigint
   | symbol
